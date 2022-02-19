@@ -58,12 +58,25 @@ def get_similar_comp_ranking(studied_comp_ticker):
     similarity_scores = pd.DataFrame(index=companies_relevant_info["Ticker"].copy())
     similarity_scores["similarity_score"] = 0.0
 
+    # list of USA states
+    us_states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Washington DC', 
+    'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 
+    'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 
+    'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 
+    'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
+
     for index, row in companies_relevant_info.iterrows():
         similarity_score = 0 # lowest = most similar
         if(row["GICS Sector"] != studied_comp_data["GICS Sector"]):
             similarity_score += 10 # biggest penalty, sector is most important thing the companies need to have in common
         elif(row["GICS Sub-Industry"] != studied_comp_data["GICS Sub-Industry"]):
             similarity_score += 1
+        if((row["Headquarters Location"].split(sep=',')[1]) in us_states and (studied_comp_data["Headquarters Location"].split(sep=',')[1]) in us_states): # checking if the companies are both located in the US
+            if(row["Headquarters Location"].split(sep=',')[0]!=studied_comp_data["Headquarters Location"].split(sep=',')[0]): # checking if the companies are both located in the same US state
+                similarity_score += 0.3
+        elif((row["Headquarters Location"].split(sep=',')[1])!=studied_comp_data["Headquarters Location"].split(sep=',')[0]): # checking if the companies are both located in the same country
+            similarity_score += 0.6
+
         similarity_score += abs(row["CUR_MKT_CAP"] - studied_comp_data["CUR_MKT_CAP"])
         
         # todo : make geopgraphy be taken into account in the scoring
