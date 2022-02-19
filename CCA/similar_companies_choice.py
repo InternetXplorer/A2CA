@@ -10,7 +10,7 @@ def getData():
     # ### Data loading and preprocessing
 
     path = "../Bloomberg_data_processing/"
-    filename = "preprocessed_sp500_final_data_01-02-22.csv"
+    filename = "preprocessed_sp500_data_01-02-22_with_sectors.csv"
 
     data = pd.read_csv(path + filename)
     # print(data.head(2))
@@ -25,7 +25,7 @@ def getData():
 
 
     # dataset with only usefull columns
-    companies_relevant_info = data[["Ticker", "GICS Sector", "GICS Sub-Industry", "CUR_MKT_CAP"]].copy()
+    companies_relevant_info = data[["Ticker", "GICS Sector", "GICS Sub-Industry", "CUR_MKT_CAP", "Headquarters Location"]].copy()
     companies_relevant_info.head()
 
     companies_relevant_info["CUR_MKT_CAP"] = np.log(companies_relevant_info["CUR_MKT_CAP"])
@@ -33,7 +33,7 @@ def getData():
     companies_relevant_info["CUR_MKT_CAP"] = companies_relevant_info["CUR_MKT_CAP"] / companies_relevant_info["CUR_MKT_CAP"].max()
     # print(companies_relevant_info.describe())
 
-    print("Number of missing values per column :\n")
+    print("Number of missing values per column in the dataset:\n")
     print(companies_relevant_info.isnull().sum())
     return companies_relevant_info
 
@@ -51,7 +51,7 @@ def get_similar_comp_ranking(studied_comp_ticker):
     # getting the studied company's data
     # studied_comp_ticker = "MMM"
     studied_comp_data = companies_relevant_info.loc[companies_relevant_info["Ticker"] == studied_comp_ticker].iloc[0]
-    studied_comp_data
+    # studied_comp_data
 
     # computing distance between the studied company and every other company
     # similarity_scores = []
@@ -72,9 +72,10 @@ def get_similar_comp_ranking(studied_comp_ticker):
         elif(row["GICS Sub-Industry"] != studied_comp_data["GICS Sub-Industry"]):
             similarity_score += 1
         if((row["Headquarters Location"].split(sep=',')[1]) in us_states and (studied_comp_data["Headquarters Location"].split(sep=',')[1]) in us_states): # checking if the companies are both located in the US
+            # instead of spliting here in the ifs, maybe we can create two separate columns in the csv for each location
             if(row["Headquarters Location"].split(sep=',')[0]!=studied_comp_data["Headquarters Location"].split(sep=',')[0]): # checking if the companies are both located in the same US state
                 similarity_score += 0.3
-        elif((row["Headquarters Location"].split(sep=',')[1])!=studied_comp_data["Headquarters Location"].split(sep=',')[0]): # checking if the companies are both located in the same country
+        elif((row["Headquarters Location"].split(sep=',')[1])!=studied_comp_data["Headquarters Location"].split(sep=',')[1]): # checking if the companies are both located in the same country
             similarity_score += 0.6
 
         similarity_score += abs(row["CUR_MKT_CAP"] - studied_comp_data["CUR_MKT_CAP"])
@@ -82,9 +83,9 @@ def get_similar_comp_ranking(studied_comp_ticker):
         # todo : make geopgraphy be taken into account in the scoring
         # and if one info is missing (market cap mostly) either leave as NaN (will be considered lowest similarity and that company will never be used) or, if we want to use that company nevertheless, give penalty of either max or average difference for that info (for example max diff for mk cap is 1 and avg is 0.288228)
 
-        similarity_scores["similarity_score"][row["Ticker"]] = 1.0 / similarity_score
+        similarity_scores["similarity_score"][row["Ticker"]] = similarity_score
 
-    sorted_similarity_scores = similarity_scores["similarity_score"].sort_values(ascending=False)
+    sorted_similarity_scores = similarity_scores["similarity_score"].sort_values(ascending=True)
     sorted_similarity_scores = sorted_similarity_scores.iloc[1:]
     # print(sorted_similarity_scores.head(10))
 
