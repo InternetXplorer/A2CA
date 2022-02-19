@@ -35,11 +35,11 @@ def getData():
 
     print("Number of missing values per column :\n")
     print(companies_relevant_info.isnull().sum())
-
     return companies_relevant_info
 
 
 def get_similar_comp_ranking(studied_comp_ticker):
+    # print("Ranking companies on similarity...")
     # ### Companies similarity ranking
     # Similarity will be determined based on sector, sub-industry, geography, and market cap (in this order of importance).
 
@@ -69,10 +69,11 @@ def get_similar_comp_ranking(studied_comp_ticker):
         # todo : make geopgraphy be taken into account in the scoring
         # and if one info is missing (market cap mostly) either leave as NaN (will be considered lowest similarity and that company will never be used) or, if we want to use that company nevertheless, give penalty of either max or average difference for that info (for example max diff for mk cap is 1 and avg is 0.288228)
 
-        similarity_scores["similarity_score"][row["Ticker"]] = similarity_score
+        similarity_scores["similarity_score"][row["Ticker"]] = 1.0 / similarity_score
 
-    sorted_similarity_scores = similarity_scores["similarity_score"].sort_values()
-    # print(sorted_similarity_scores.head(15))
+    sorted_similarity_scores = similarity_scores["similarity_score"].sort_values(ascending=False)
+    sorted_similarity_scores = sorted_similarity_scores.iloc[1:]
+    # print(sorted_similarity_scores.head(10))
 
     # TODO : we could return additional info like MK_cap difference with studied comp, and booleans for each criteria (same sector, same sub-industry, same geography), for booleans, if false, provide the comp info
     # to provide more info to user about reasons these comps were chosen & make sure he's okay with this choice
