@@ -21,6 +21,6 @@ def compute_ratios(companies_data):
     companies_data["EV_EBIT_ratio"] = companies_data["CURR_ENTP_VAL"] / companies_data["EBIT"]
     companies_data["EV_EBITDA_ratio"] = companies_data["CURR_ENTP_VAL"] / companies_data["EBITDA"]
     # companies_data["EV_revenue_ratio"] = companies_data["CURR_ENTP_VAL"] / companies_data["revenue"]
-    companies_data["EV_gross_profit_ratio"] = companies_data["CURR_ENTP_VAL"] / companies_data["GROSS_PROFIT"]
+    companies_data["EV_GROSS_PROFIT_ratio"] = companies_data["CURR_ENTP_VAL"] / companies_data["GROSS_PROFIT"]
     
     return companies_data
