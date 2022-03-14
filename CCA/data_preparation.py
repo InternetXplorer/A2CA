@@ -12,7 +12,7 @@ def get_financial_data(ticker_list):
 
     companies_data = data.loc[data['Ticker'].isin(ticker_list)]
     companies_data = companies_data[["Ticker", "CUR_MKT_CAP", "CURR_ENTP_VAL", "EBIT", "EBITDA", "GROSS_PROFIT", "PE_RATIO"]].copy()
-    print(companies_data)
+    # print(companies_data)
 
     return companies_data
 
