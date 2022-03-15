@@ -65,8 +65,9 @@ def get_similar_comp_ranking(studied_comp_ticker):
 
     # computing distance between the studied company and every other company
     # similarity_scores = []
-    similarity_scores = pd.DataFrame(index=companies_relevant_info["Ticker"].copy())
-    similarity_scores["similarity_score"] = 0.0
+    # similarity_scores = pd.DataFrame(index=companies_relevant_info["Ticker"].copy())
+    # similarity_scores["similarity_score"] = 0.0
+    companies_relevant_info["similarity_score"] = 0.0
 
     # list of USA states
     us_states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Washington DC', 
@@ -106,9 +107,12 @@ def get_similar_comp_ranking(studied_comp_ticker):
 
         # and if one info is missing (market cap mostly) either leave as NaN (will be considered lowest similarity and that company will never be used) or, if we want to use that company nevertheless, give penalty of either max or average difference for that info (for example max diff for mk cap is 1 and avg is 0.288228)
 
-        similarity_scores["similarity_score"][row["Ticker"]] = similarity_score
+        # similarity_scores["similarity_score"][row["Ticker"]] = similarity_score
+        companies_relevant_info["similarity_score"][row["Ticker"]] = similarity_score
 
-    sorted_similarity_scores = similarity_scores["similarity_score"].sort_values(ascending=True)
+
+    # sorted_similarity_scores = similarity_scores["similarity_score"].sort_values(ascending=True)
+    sorted_similarity_scores = companies_relevant_info["similarity_score"].sort_values(ascending=True)
     sorted_similarity_scores = sorted_similarity_scores.iloc[1:]
     # print(sorted_similarity_scores.head(10))
 
