@@ -4,13 +4,17 @@ import pandas as pd
 import numpy as np
 
 
-def get_financial_data(ticker_list):
+def get_financial_data(ticker_list=None):
     path = "../Bloomberg_data_processing/"
-    filename = "preprocessed_sp500_data_01-02-22_with_sectors.csv"
+    # filename = "preprocessed_sp500_data_01-02-22_with_sectors.csv"
+    filename = "preprocessed_russell_3k_data_14-03-22.csv"
 
     data = pd.read_csv(path + filename)
-
-    companies_data = data.loc[data['Ticker'].isin(ticker_list)]
+    companies_data = None
+    if(ticker_list is None):
+        companies_data = data.copy()
+    else:
+        companies_data = data.loc[data['Ticker'].isin(ticker_list)]
     companies_data = companies_data[["Ticker", "CUR_MKT_CAP", "CURR_ENTP_VAL", "EBIT", "EBITDA", "GROSS_PROFIT", "PE_RATIO"]].copy()
     # print(companies_data)
 
